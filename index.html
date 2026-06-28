@@ -340,6 +340,7 @@ function seedCompanies() { /* see the apps-script.js file */ }</div>
 <script>
 const ADMIN_PASS="BNI2026";
 const LS_CO="vl7_companies",LS_SEL="vl7_selections",LS_SHEET="vl7_sheet";
+const DEFAULT_SHEET_URL="https://script.google.com/macros/s/AKfycbx0Im0MHAvTsjGQUebZIlSbTIyf-drxm3bplK-BobcyecKXGfcB-cOwVytrK-7QC4nEsA/exec";
 
 // FIXED CODES — hardcoded, identical on every device
 const ACCESS_CODES={
@@ -395,7 +396,7 @@ function verifyCode(name,input){
 function loadLocal(){
   try{companies=JSON.parse(localStorage.getItem(LS_CO)||"[]");}catch(e){companies=[];}
   try{selections=JSON.parse(localStorage.getItem(LS_SEL)||"{}");}catch(e){selections={};}
-  sheetUrl=localStorage.getItem(LS_SHEET)||"";
+  sheetUrl=localStorage.getItem(LS_SHEET)||DEFAULT_SHEET_URL;
 }
 function saveCo(){localStorage.setItem(LS_CO,JSON.stringify(companies));}
 function saveSel(){localStorage.setItem(LS_SEL,JSON.stringify(selections));}
@@ -644,7 +645,7 @@ async function finalConfirm(){
 }
 
 loadLocal();
-if(sheetUrl)document.getElementById("sheet-url").value=sheetUrl;
+document.getElementById("sheet-url").value=sheetUrl||DEFAULT_SHEET_URL;
 </script>
 </body>
 </html>
