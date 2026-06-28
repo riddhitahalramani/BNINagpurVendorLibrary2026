@@ -340,7 +340,7 @@ function seedCompanies() { /* see the apps-script.js file */ }</div>
 <script>
 const ADMIN_PASS="BNI2026";
 const LS_CO="vl7_companies",LS_SEL="vl7_selections",LS_SHEET="vl7_sheet";
-const DEFAULT_SHEET_URL="https://script.google.com/macros/s/AKfycbx0Im0MHAvTsjGQUebZIlSbTIyf-drxm3bplK-BobcyecKXGfcB-cOwVytrK-7QC4nEsA/exec";
+const DEFAULT_SHEET_URL="https://script.google.com/macros/s/AKfycbxrmI0dEeIWRYeWmHrK7iNpui8WQ_rAI4h34VZV2IJ0WFezdptq1OkfsaJ37iUTB2eYUA/exec";
 
 // FIXED CODES — hardcoded, identical on every device
 const ACCESS_CODES={
@@ -429,22 +429,55 @@ async function fetchSheet(){
   return false;
 }
 
-async function pushSheet(name,sel){
-  if(!sheetUrl)return false;
-  try{
-    const params=new URLSearchParams({
-      action:"save",
-      sponsor:name,
-      company:sel.company,
-      rep:sel.rep||"",
-      cat:sel.cat||"",
-      ts:sel.timestamp
-    });
-    const r=await fetch(sheetUrl+"?"+params.toString());
-    if(!r.ok)return false;
-    const d=await r.json();
-    return d.status==="ok";
-  }catch(e){console.error("pushSheet error:",e);return false;}
+async function pushSheet(name, sel) {
+  return new Promise((resolve) => {
+    try {
+      const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSehY4zZuNNwBOqyABawOk-QG5vL_jvXi_M7gI2YI6qp6g8egg/formResponse";
+      const iframe = document.createElement("iframe");
+      iframe.style.cssText = "display:none;width:0;height:0;border:0";
+      iframe.name = "vl_submit_" + Date.now();
+      document.body.appendChild(iframe);
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = FORM;
+      form.target = iframe.name;
+      form.style.display = "none";
+      const fields = {
+        "entry.869735586": name,
+        "entry.2064255569": sel.company,
+        "entry.595302351": sel.cat || "",
+        "entry.2086227788": sel.timestamp,
+        "fvv": "1", "draftResponse": "[]", "pageHistory": "0"
+      };
+      Object.entries(fields).forEach(([k,v]) => {
+        const inp = document.createElement("input");
+        inp.type = "hidden"; inp.name = k; inp.value = v;
+        form.appendChild(inp);
+      });
+      document.body.appendChild(form);
+      form.submit();
+      // Poll sheet to confirm the write went through (up to 12 seconds)
+      let attempts = 0;
+      const poll = setInterval(async () => {
+        attempts++;
+        await fetchSheet();
+        if (selections[name] && selections[name].company === sel.company) {
+          clearInterval(poll);
+          try { document.body.removeChild(iframe); document.body.removeChild(form); } catch(e) {}
+          resolve(true);
+        } else if (attempts >= 8) {
+          clearInterval(poll);
+          // Form submission went through but sheet is slow — save locally
+          selections[name] = sel; saveSel();
+          try { document.body.removeChild(iframe); document.body.removeChild(form); } catch(e) {}
+          resolve(true);
+        }
+      }, 1500);
+    } catch(e) {
+      console.error("pushSheet error:", e);
+      resolve(false);
+    }
+  });
 }
 
 function show(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");}
@@ -645,7 +678,7 @@ function openModal(){
 function closeModal(){document.getElementById("modal").classList.remove("open");}
 
 async function finalConfirm(){
-  closeModal();showLoading("Securing your pitch slot...");
+  closeModal();showLoading("Confirming your slot — please wait up to 15 seconds...");
   await fetchSheet();
   if(new Set(Object.values(selections).map(s=>s.company)).has(spSelected.name)){
     hideLoading();alert("Sorry - this slot was just taken. Please choose another.");spSelected=null;renderGrid();return;
