@@ -239,32 +239,44 @@
     <div class="section-card">
       <div class="section-header"><span class="section-title">&#9881; Google Sheets &mdash; live sync</span></div>
       <div class="section-body">
-        <div id="sheet-ok" style="display:none" class="alert alert-teal">&#10003; &nbsp;Connected. Every confirmed selection syncs to your Google Sheet instantly.</div>
+        <div id="sheet-ok" style="display:none" class="alert alert-teal">&#10003; &nbsp;Connected. Companies load from the <strong>Companies</strong> tab. Selections sync to the <strong>Selections</strong> tab instantly.</div>
         <div id="sheet-form">
           <div class="steps">
             <div class="step"><span class="step-n">1</span><span>Open <strong>script.google.com</strong> &rarr; New project &rarr; paste the code below</span></div>
             <div class="step"><span class="step-n">2</span><span>Click <strong>Deploy &rarr; New deployment &rarr; Web App</strong> &rarr; set access to <strong>Anyone</strong> &rarr; Deploy</span></div>
-            <div class="step"><span class="step-n">3</span><span>Replace <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">YOUR_SHEET_ID</code> with your Google Sheet ID, paste the Web App URL below</span></div>
+            <div class="step"><span class="step-n">3</span><span>Replace <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">YOUR_SHEET_ID</code> with your Sheet ID &rarr; Deploy &rarr; paste URL below. Then run <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">seedCompanies()</code> once to populate the Companies tab.</span></div>
           </div>
-          <div class="code-block">function doPost(e) {
-  var ss = SpreadsheetApp.openById("YOUR_SHEET_ID");
+          <div class="code-block">var SHEET_ID = "YOUR_SHEET_ID";
+
+function doGet(e) {
+  var action = e.parameter.action || "selections";
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  if (action === "companies") {
+    var sh = ss.getSheetByName("Companies");
+    if (!sh || sh.getLastRow() &lt;= 1) return json({companies:[]});
+    var data = sh.getRange(2,1,sh.getLastRow()-1,2).getValues();
+    return json({companies: data.filter(function(r){return r[0];})
+      .map(function(r){return {name:r[0].toString().trim(),cat:r[1].toString().trim()};})});
+  }
+  var sh = ss.getSheetByName("Selections");
+  if (!sh || sh.getLastRow() &lt;= 1) return json({rows:[]});
+  return json({rows: ss.getSheetByName("Selections")
+    .getRange(2,1,sh.getLastRow()-1,5).getValues()});
+}
+function doPost(e) {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
   var sh = ss.getSheetByName("Selections") || ss.insertSheet("Selections");
-  if (sh.getLastRow() === 0)
-    sh.appendRow(["Timestamp","Sponsor Name","Company","Representative","Category"]);
-  var d = JSON.parse(e.postData.contents);
-  d.rows.forEach(function(r) { sh.appendRow(r); });
-  return ContentService.createTextOutput(JSON.stringify({status:"ok"}))
+  if (sh.getLastRow()===0)
+    sh.appendRow(["Timestamp","Sponsor","Company","Representative","Category"]);
+  JSON.parse(e.postData.contents).rows.forEach(function(r){sh.appendRow(r);});
+  return json({status:"ok"});
+}
+function json(o){
+  return ContentService.createTextOutput(JSON.stringify(o))
     .setMimeType(ContentService.MimeType.JSON);
 }
-function doGet(e) {
-  var ss = SpreadsheetApp.openById("YOUR_SHEET_ID");
-  var sh = ss.getSheetByName("Selections");
-  if (!sh || sh.getLastRow() <= 1)
-    return ContentService.createTextOutput(JSON.stringify({rows:[]})).setMimeType(ContentService.MimeType.JSON);
-  var data = sh.getRange(2,1,sh.getLastRow()-1,5).getValues();
-  return ContentService.createTextOutput(JSON.stringify({rows:data}))
-    .setMimeType(ContentService.MimeType.JSON);
-}</div>
+// Run seedCompanies() ONCE manually to populate the Companies sheet:
+function seedCompanies() { /* see the apps-script.js file */ }</div>
           <div class="url-row">
             <input id="sheet-url" placeholder="https://script.google.com/macros/s/.../exec">
             <button class="btn btn-teal" onclick="saveSheetUrl()">Save &amp; connect</button>
@@ -275,19 +287,12 @@ function doGet(e) {
     <div class="section-card">
       <div class="section-header">
         <span class="section-title">Company list <span id="co-count" style="font-size:12px;color:#9CA3AF;font-weight:400"></span></span>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-outline btn-sm" onclick="document.getElementById('csv-in').click()">&#8593; Upload CSV</button>
-          <button class="btn btn-outline btn-sm" onclick="showAddRow()">+ Add company</button>
-          <input id="csv-in" type="file" accept=".csv" style="display:none" onchange="handleCSV(event)">
-        </div>
+        <button class="btn btn-outline btn-sm" onclick="refreshAdmin()">&#8635; Refresh from Sheets</button>
       </div>
       <div class="section-body">
-        <div id="add-row-form" class="add-row-form">
-          <input id="nr-name" placeholder="Company name *">
-          <input id="nr-rep" placeholder="Representative">
-          <input id="nr-cat" placeholder="Category">
-          <button class="btn btn-teal btn-sm" onclick="addCompany()">Add</button>
-          <button class="btn btn-outline btn-sm" onclick="hideAddRow()">Cancel</button>
+        <div class="alert alert-gold" style="margin-bottom:16px">
+          Companies are managed in the <strong>Companies</strong> tab of your Google Sheet. Edit them there and click Refresh to sync.
+          Run the <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">seedCompanies()</code> function once in Apps Script to pre-populate all 57 companies.
         </div>
         <div id="admin-tbl-wrap"></div>
       </div>
@@ -334,7 +339,7 @@ function doGet(e) {
 
 <script>
 const ADMIN_PASS="BNI2026";
-const LS_CO="vl6_companies",LS_SEL="vl6_selections",LS_SHEET="vl6_sheet";
+const LS_CO="vl7_companies",LS_SEL="vl7_selections",LS_SHEET="vl7_sheet";
 
 // FIXED CODES — hardcoded, identical on every device
 const ACCESS_CODES={
@@ -395,10 +400,23 @@ function loadLocal(){
 function saveCo(){localStorage.setItem(LS_CO,JSON.stringify(companies));}
 function saveSel(){localStorage.setItem(LS_SEL,JSON.stringify(selections));}
 
+async function fetchCompanies(){
+  if(!sheetUrl)return false;
+  try{
+    const r=await fetch(sheetUrl+"?action=companies&t="+Date.now());
+    const d=await r.json();
+    if(d.companies&&Array.isArray(d.companies)&&d.companies.length>0){
+      companies=d.companies;
+      saveCo();return true;
+    }
+  }catch(e){}
+  return false;
+}
+
 async function fetchSheet(){
   if(!sheetUrl)return false;
   try{
-    const r=await fetch(sheetUrl+"?t="+Date.now());
+    const r=await fetch(sheetUrl+"?action=selections&t="+Date.now());
     const d=await r.json();
     if(d.rows&&Array.isArray(d.rows)){
       selections={};
@@ -455,7 +473,7 @@ async function doLogin(){
   if(!role){errEl.textContent="Please select your role.";errEl.style.display="block";return;}
   if(role==="admin"){
     if(document.getElementById("admin-pass").value!==ADMIN_PASS){errEl.textContent="Incorrect passcode.";errEl.style.display="block";return;}
-    showLoading("Loading admin dashboard...");loadLocal();await fetchSheet();hideLoading();
+    showLoading("Loading admin dashboard...");loadLocal();await Promise.all([fetchCompanies(),fetchSheet()]);hideLoading();
     setTopbar("admin");renderAdmin();show("pg-admin");
   }else{
     const name=document.getElementById("sponsor-sel").value;
@@ -466,7 +484,7 @@ async function doLogin(){
       errEl.textContent="Incorrect access code for "+name+". Please check the code sent to you via WhatsApp.";
       errEl.style.display="block";return;
     }
-    showLoading("Verifying your access...");loadLocal();await fetchSheet();hideLoading();
+    showLoading("Loading the Vendor Library...");loadLocal();await Promise.all([fetchCompanies(),fetchSheet()]);hideLoading();
     currentSponsor=name;
     if(selections[name]){
       const sel=selections[name];
@@ -475,7 +493,7 @@ async function doLogin(){
       document.getElementById("done-sheet-note").textContent="Your selection is locked in. See you at NCube 2026!";
       show("pg-done");return;
     }
-    if(companies.length===0){errEl.textContent="The company list has not been uploaded yet. Please check back shortly.";errEl.style.display="block";return;}
+    if(companies.length===0){errEl.textContent="Unable to load the company list. Please check your internet connection and try again.";errEl.style.display="block";return;}
     spSelected=null;setTopbar("sponsor",name);
     document.getElementById("sp-greeting").textContent="Welcome, "+name;
     populateCatFilter();renderGrid();show("pg-sponsor");
@@ -522,7 +540,7 @@ function copyAllCodes(){
   });
 }
 
-async function refreshAdmin(){showLoading("Refreshing...");await fetchSheet();hideLoading();renderAdmin();}
+async function refreshAdmin(){showLoading("Refreshing...");await Promise.all([fetchCompanies(),fetchSheet()]);hideLoading();renderAdmin();}
 
 function renderAdminTable(){
   const takenBy={};
