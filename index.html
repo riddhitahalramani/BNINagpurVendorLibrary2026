@@ -432,10 +432,19 @@ async function fetchSheet(){
 async function pushSheet(name,sel){
   if(!sheetUrl)return false;
   try{
-    const r=await fetch(sheetUrl,{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({rows:[[sel.timestamp,name,sel.company,sel.rep||"",sel.cat||""]]})});
-    return r.ok;
-  }catch(e){return false;}
+    const params=new URLSearchParams({
+      action:"save",
+      sponsor:name,
+      company:sel.company,
+      rep:sel.rep||"",
+      cat:sel.cat||"",
+      ts:sel.timestamp
+    });
+    const r=await fetch(sheetUrl+"?"+params.toString());
+    if(!r.ok)return false;
+    const d=await r.json();
+    return d.status==="ok";
+  }catch(e){console.error("pushSheet error:",e);return false;}
 }
 
 function show(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");}
