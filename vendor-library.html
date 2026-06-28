@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vendor Library — BNI Nagpur Members Day 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+  :root {
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --gold: #B8860B;
+    --gold-light: #FDF8EC;
+    --red-light: #FEF2F2;
+    --red: #B91C1C;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+    --white: #FFFFFF;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 24px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-brand { display: flex; align-items: center; gap: 12px; }
+  .topbar-brand .wordmark { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--teal); }
+  .topbar-brand .event-tag {
+    font-size: 11px; font-weight: 500; color: var(--gray-500);
+    border-left: 1px solid var(--gray-200); padding-left: 12px; letter-spacing: 0.02em;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    letter-spacing: 0.02em;
+  }
+  .badge-teal { background: var(--teal-light); color: var(--teal); }
+  .badge-gold { background: var(--gold-light); color: var(--gold); }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── LANDING ── */
+  .landing-wrap {
+    min-height: calc(100vh - 58px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+  .landing-card {
+    background: var(--white); border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    padding: 36px 32px; width: 100%; max-width: 420px;
+  }
+  .landing-eyebrow {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--teal); margin-bottom: 8px;
+  }
+  .landing-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; color: var(--gray-900); margin-bottom: 6px; line-height: 1.2;
+  }
+  .landing-sub { font-size: 13px; color: var(--gray-500); margin-bottom: 28px; }
+  .divider { height: 1px; background: var(--gray-200); margin: 20px 0; }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: var(--gray-700); margin-bottom: 5px;
+  }
+  .field select, .field input {
+    width: 100%; height: 40px; padding: 0 12px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 13px; font-family: 'Inter', sans-serif;
+    color: var(--gray-900); background: var(--white);
+    transition: border-color 0.15s;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  .field input { background-image: none; }
+  .field select:focus, .field input:focus {
+    outline: none; border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(15,110,86,0.1);
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 40px; padding: 0 18px; border-radius: var(--radius);
+    font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif;
+    cursor: pointer; transition: all 0.15s; border: none;
+  }
+  .btn-teal { background: var(--teal); color: var(--white); }
+  .btn-teal:hover { background: #0a5a45; }
+  .btn-teal:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-outline {
+    background: var(--white); color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+  }
+  .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+  .btn-outline-red {
+    background: var(--white); color: var(--red);
+    border: 1px solid #FCA5A5;
+  }
+  .btn-outline-red:hover { background: var(--red-light); }
+  .btn-full { width: 100%; }
+  .btn-sm { height: 32px; padding: 0 12px; font-size: 12px; }
+
+  /* ── ALERTS ── */
+  .alert {
+    padding: 10px 14px; border-radius: var(--radius);
+    font-size: 13px; margin-bottom: 14px;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .alert-red { background: var(--red-light); color: var(--red); border: 1px solid #FCA5A5; }
+  .alert-teal { background: var(--teal-light); color: var(--teal); border: 1px solid #6EE7B7; }
+  .alert-gold { background: var(--gold-light); color: var(--gold); border: 1px solid #FCD34D; }
+
+  /* ── ADMIN LAYOUT ── */
+  .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 22px; }
+  .stat-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .stat-label { font-size: 11px; color: var(--gray-500); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-val { font-size: 28px; font-weight: 600; line-height: 1; }
+  .stat-val.green { color: var(--teal); }
+  .stat-val.red { color: var(--red); }
+
+  .section-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden;
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-bottom: 1px solid var(--gray-200);
+  }
+  .section-title { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+  .section-body { padding: 20px; }
+
+  /* ── TABLES ── */
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; padding: 8px 12px;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 11px; font-weight: 600; color: var(--gray-500);
+    text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--gray-50); }
+
+  .pill {
+    display: inline-block; padding: 2px 10px;
+    border-radius: 20px; font-size: 11px; font-weight: 600;
+  }
+  .pill-green { background: var(--teal-light); color: var(--teal); }
+  .pill-red { background: var(--red-light); color: var(--red); }
+
+  /* ── SHEETS SETUP ── */
+  .steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--gray-700); }
+  .step-n {
+    min-width: 22px; height: 22px; border-radius: 50%;
+    background: var(--teal-light); color: var(--teal);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .code-block {
+    background: var(--gray-900); color: #A3E635;
+    padding: 14px 16px; border-radius: var(--radius);
+    font-family: 'Courier New', monospace; font-size: 12px;
+    line-height: 1.7; overflow-x: auto; margin: 12px 0;
+    white-space: pre;
+  }
+  .url-row { display: flex; gap: 8px; }
+  .url-row input {
+    flex: 1; height: 40px; padding: 0 12px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 13px; font-family: 'Inter', sans-serif; color: var(--gray-900);
+  }
+  .url-row input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(15,110,86,0.1); }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone {
+    border: 2px dashed var(--gray-200); border-radius: var(--radius-lg);
+    padding: 32px; text-align: center; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .upload-zone:hover { border-color: var(--teal); background: var(--teal-light); }
+  .upload-icon { font-size: 32px; margin-bottom: 10px; }
+  .upload-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .upload-hint { font-size: 12px; color: var(--gray-400); }
+
+  /* ── SPONSOR LAYOUT ── */
+  .sp-wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+  .sp-header { margin-bottom: 18px; }
+  .sp-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gray-900); margin-bottom: 4px; }
+  .sp-sub { font-size: 13px; color: var(--gray-500); }
+
+  .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .toolbar input, .toolbar select {
+    height: 36px; padding: 0 10px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 13px; font-family: 'Inter', sans-serif;
+    color: var(--gray-900); background: var(--white); appearance: none; -webkit-appearance: none;
+  }
+  .toolbar input { flex: 1; min-width: 180px; background-image: none; }
+  .toolbar select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+  }
+  .toolbar input:focus, .toolbar select:focus { outline: none; border-color: var(--teal); }
+
+  .sel-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; background: var(--teal-light);
+    border: 1px solid #6EE7B7; border-radius: var(--radius);
+    margin-bottom: 14px;
+  }
+  .sel-bar span { font-size: 13px; font-weight: 500; color: var(--teal); }
+
+  .co-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 16px;
+  }
+  .co-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 16px; cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s; position: relative;
+  }
+  .co-card:hover:not(.taken) { border-color: var(--teal-mid); box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
+  .co-card.taken { opacity: 0.38; cursor: not-allowed; pointer-events: none; }
+  .co-card.sel { border: 2px solid var(--teal); background: var(--teal-light); }
+  .co-card.sel .co-name { color: var(--teal); }
+  .co-cat { font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .co-name { font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; line-height: 1.3; }
+  .co-rep { font-size: 12px; color: var(--gray-500); }
+  .co-chk {
+    position: absolute; top: 10px; right: 10px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--teal); display: flex; align-items: center; justify-content: center;
+  }
+  .co-chk svg { width: 10px; height: 10px; }
+  .taken-lbl {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 10px; font-weight: 600; color: var(--red);
+    background: var(--red-light); padding: 2px 7px; border-radius: 20px;
+  }
+
+  .sp-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; background: var(--white);
+    border-top: 1px solid var(--gray-200); border-radius: var(--radius);
+    margin-top: 8px;
+  }
+  .sp-foot span { font-size: 13px; color: var(--gray-500); }
+
+  /* ── MODAL OVERLAY ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 100;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200); padding: 28px;
+    max-width: 400px; width: 100%;
+  }
+  .modal h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; }
+  .modal-co-card {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 16px;
+  }
+  .modal-co-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .modal-co-rep { font-size: 13px; color: var(--gray-500); }
+  .modal-co-cat { font-size: 11px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .modal-foot { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* ── DONE PAGE ── */
+  .done-wrap {
+    min-height: calc(100vh - 58px);
+    display: flex; align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .done-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 40px 32px;
+    max-width: 420px; width: 100%; text-align: center;
+  }
+  .done-icon { font-size: 48px; margin-bottom: 16px; }
+  .done-title { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 8px; }
+  .done-msg { font-size: 14px; color: var(--gray-500); margin-bottom: 20px; line-height: 1.6; }
+
+  /* ── LOADING SPINNER ── */
+  .spinner-wrap { display: flex; align-items: center; justify-content: center; padding: 40px; }
+  .spinner {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid var(--gray-200);
+    border-top-color: var(--teal);
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state { padding: 32px; text-align: center; color: var(--gray-400); font-size: 14px; }
+
+  /* ── ADD ROW FORM ── */
+  .add-row-form {
+    display: none; gap: 8px; flex-wrap: wrap;
+    padding: 14px; background: var(--gray-50);
+    border-radius: var(--radius); margin-bottom: 14px;
+    border: 1px solid var(--gray-200);
+  }
+  .add-row-form input {
+    flex: 1; min-width: 120px; height: 36px; padding: 0 10px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 13px; font-family: 'Inter', sans-serif; color: var(--gray-900);
+  }
+  .add-row-form input:focus { outline: none; border-color: var(--teal); }
+
+  /* ── LOADING OVERLAY ── */
+  #loading-overlay {
+    position: fixed; inset: 0; background: rgba(255,255,255,0.85);
+    z-index: 200; display: none;
+    align-items: center; justify-content: center; flex-direction: column; gap: 12px;
+  }
+  #loading-overlay.show { display: flex; }
+  #loading-overlay span { font-size: 13px; color: var(--gray-500); }
+
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2,1fr); }
+    .co-grid { grid-template-columns: 1fr 1fr; }
+    .topbar-brand .event-tag { display: none; }
+    .landing-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <span id="loading-msg">Loading…</span>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <h3>Confirm your pitch slot</h3>
+    <p>You are securing a 10-minute exclusive pitch slot with:</p>
+    <div class="modal-co-card">
+      <div class="modal-co-cat" id="modal-cat"></div>
+      <div class="modal-co-name" id="modal-name"></div>
+      <div class="modal-co-rep" id="modal-rep"></div>
+    </div>
+    <p style="font-size:12px;color:#9CA3AF;margin-bottom:18px">Once confirmed, this slot is exclusively yours and will no longer be available to others.</p>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal()">Edit</button>
+      <button class="btn btn-teal" onclick="finalConfirm()">Confirm slot</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="wordmark">The Vendor Library</span>
+    <span class="event-tag">BNI Nagpur · Members Day 2026</span>
+  </div>
+  <div id="topbar-right" style="display:flex;align-items:center;gap:8px"></div>
+</div>
+
+<!-- PAGE: LANDING -->
+<div id="pg-landing" class="page active">
+  <div class="landing-wrap">
+    <div class="landing-card">
+      <div class="landing-eyebrow">BNI Nagpur · Members Day 2026</div>
+      <div class="landing-title">The Vendor Library</div>
+      <div class="landing-sub">Secure your exclusive 10-minute pitch slot with one of our 57 visiting corporates.</div>
+      <div class="divider"></div>
+      <div class="field">
+        <label>I am</label>
+        <select id="role-sel" onchange="onRoleChange()">
+          <option value="">Select your role…</option>
+          <option value="admin">Admin — BNI Executive Director</option>
+          <option value="sponsor">Corporate Sponsor</option>
+        </select>
+      </div>
+      <div id="f-sponsor" style="display:none" class="field">
+        <label>Select your name</label>
+        <select id="sponsor-sel">
+          <option value="">Choose your name…</option>
+          <option>Abdul ramiz shahezad</option>
+          <option>Abhay Tembhurne</option>
+          <option>Aditi Tiwari Bobhate</option>
+          <option>Adv. Mallika Yaduka</option>
+          <option>Amit Kothari</option>
+          <option>Amit sawal</option>
+          <option>Amol Joshi</option>
+          <option>Anubhav Gupta</option>
+          <option>Ar. Tejaal Rakshamwar</option>
+          <option>Ar.Amruta Bajaj</option>
+          <option>Changdeo Bhendarkar</option>
+          <option>Dhawal Shah</option>
+          <option>Dilip Agarkar</option>
+          <option>Dipali Mishra</option>
+          <option>Dr Jageshwar Dodake</option>
+          <option>Haider Dhun</option>
+          <option>Harshal bhoyar</option>
+          <option>himanshu goenka</option>
+          <option>Issac Sinha</option>
+          <option>Kaushik ukani</option>
+          <option>Khushal shevkani</option>
+          <option>Krishi Chouriya</option>
+          <option>Kunal Gajbhiye</option>
+          <option>MURALE DHARAN IYER</option>
+          <option>Nidhi Jhunjhunwala</option>
+          <option>Pankaj ghodmare</option>
+          <option>Pranav Dange</option>
+          <option>Rahul Faye</option>
+          <option>Richa Ruthia</option>
+          <option>Santosh Bopche</option>
+          <option>Sarang Bhingare</option>
+          <option>Sizi Bali</option>
+          <option>Smita Khare</option>
+          <option>Subhash jain</option>
+          <option>Suchita Aurora</option>
+          <option>Vaidehi Agrawal</option>
+          <option>Vikram Jain</option>
+          <option>Zeba Mirza</option>
+        </select>
+      </div>
+      <div id="f-admin" style="display:none" class="field">
+        <label>Admin passcode</label>
+        <input id="admin-pass" type="password" placeholder="Enter passcode" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="login-err" style="display:none" class="alert alert-red"></div>
+      <button class="btn btn-teal btn-full" onclick="doLogin()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: ADMIN -->
+<div id="pg-admin" class="page">
+  <div class="admin-wrap">
+    <div id="admin-stats" class="stats-grid"></div>
+
+    <!-- Google Sheets -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">⚙ Google Sheets — live sync</span>
+      </div>
+      <div class="section-body">
+        <div id="sheet-ok" style="display:none" class="alert alert-teal">
+          ✓ &nbsp;Connected. Every confirmed selection syncs to your Google Sheet instantly.
+        </div>
+        <div id="sheet-form">
+          <div class="steps">
+            <div class="step"><span class="step-n">1</span><span>Open <strong>script.google.com</strong> → New project → paste the code below</span></div>
+            <div class="step"><span class="step-n">2</span><span>Click <strong>Deploy → New deployment → Web App</strong> → set access to <strong>Anyone</strong> → Deploy</span></div>
+            <div class="step"><span class="step-n">3</span><span>Replace <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">YOUR_SHEET_ID</code> with the ID from your Google Sheet URL, then paste the Web App URL below</span></div>
+          </div>
+          <div class="code-block">function doPost(e) {
+  var ss = SpreadsheetApp.openById("YOUR_SHEET_ID");
+  var sh = ss.getSheetByName("Selections") || ss.insertSheet("Selections");
+  if (sh.getLastRow() === 0)
+    sh.appendRow(["Timestamp", "Sponsor Name", "Company", "Representative", "Category"]);
+  var d = JSON.parse(e.postData.contents);
+  d.rows.forEach(function(r) { sh.appendRow(r); });
+  return ContentService.createTextOutput(JSON.stringify({status:"ok"}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  var ss = SpreadsheetApp.openById("YOUR_SHEET_ID");
+  var sh = ss.getSheetByName("Selections");
+  if (!sh || sh.getLastRow() <= 1) return ContentService.createTextOutput(JSON.stringify({rows:[]})).setMimeType(ContentService.MimeType.JSON);
+  var data = sh.getRange(2, 1, sh.getLastRow()-1, 5).getValues();
+  return ContentService.createTextOutput(JSON.stringify({rows:data}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</div>
+          <div class="url-row">
+            <input id="sheet-url" placeholder="https://script.google.com/macros/s/…/exec" />
+            <button class="btn btn-teal" onclick="saveSheetUrl()">Save & connect</button>
+          </div>
+          <div style="font-size:12px;color:var(--gray-400);margin-top:8px">The same URL is used for both reading (GET) and writing (POST) selections in real time.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Company list -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">Company list <span id="co-count" style="font-size:12px;color:#9CA3AF;font-weight:400"></span></span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('csv-in').click()">↑ Upload CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="showAddRow()">+ Add company</button>
+          <input id="csv-in" type="file" accept=".csv" style="display:none" onchange="handleCSV(event)">
+        </div>
+      </div>
+      <div class="section-body">
+        <div id="add-row-form" class="add-row-form">
+          <input id="nr-name" placeholder="Company name *">
+          <input id="nr-rep" placeholder="Representative">
+          <input id="nr-cat" placeholder="Category">
+          <button class="btn btn-teal btn-sm" onclick="addCompany()">Add</button>
+          <button class="btn btn-outline btn-sm" onclick="hideAddRow()">Cancel</button>
+        </div>
+        <div id="admin-tbl-wrap">
+          <div class="upload-zone" onclick="document.getElementById('csv-in').click()">
+            <div class="upload-icon">📋</div>
+            <div class="upload-title">Upload your company list</div>
+            <div class="upload-hint">CSV file · Columns: Company Name, Representative, Category</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-bottom:24px">
+      <button class="btn btn-outline" onclick="refreshAdmin()">↻ Refresh</button>
+      <button class="btn btn-outline-red" onclick="resetSelections()">Reset all selections</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: SPONSOR -->
+<div id="pg-sponsor" class="page">
+  <div class="sp-wrap">
+    <div class="sp-header">
+      <div class="sp-title" id="sp-greeting"></div>
+      <div class="sp-sub">Browse the available companies and select one for your exclusive 10-minute pitch. Greyed-out slots are taken.</div>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="sp-q" placeholder="Search company or representative…" oninput="renderGrid()">
+      <select id="sp-cat" onchange="renderGrid()"><option value="">All categories</option></select>
+    </div>
+    <div id="sp-sel-bar" style="display:none" class="sel-bar">
+      <span id="sp-sel-txt"></span>
+      <button class="btn btn-outline btn-sm" onclick="spClear()">Change selection</button>
+    </div>
+    <div id="sp-grid" class="co-grid"></div>
+    <div class="sp-foot">
+      <span id="sp-count"></span>
+      <button class="btn btn-teal" id="sp-confirm-btn" onclick="openModal()" disabled>Confirm my pitch slot →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DONE -->
+<div id="pg-done" class="page">
+  <div class="done-wrap">
+    <div class="done-card">
+      <div class="done-icon">✅</div>
+      <div class="done-title">Slot confirmed!</div>
+      <div id="done-msg" class="done-msg"></div>
+      <div id="done-detail" class="modal-co-card" style="text-align:left;margin-bottom:20px"></div>
+      <div id="done-sheet-note" class="alert alert-teal" style="text-align:left;margin-bottom:20px"></div>
+      <button class="btn btn-outline btn-full" onclick="logout()">Back to start</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────
+const ADMIN_PASS = "BNI2026";
+const LS_CO = "vl3_companies";
+const LS_SEL = "vl3_selections";
+const LS_SHEET = "vl3_sheet_url";
+
+// ── STATE ────────────────────────────────────────────────────────
+let companies = [];
+let selections = {}; // { sponsorName: { company, rep, cat, timestamp } }
+let sheetUrl = "";
+let currentSponsor = "";
+let spSelected = null;
+
+// ── PERSISTENCE ──────────────────────────────────────────────────
+function loadLocal() {
+  try { companies = JSON.parse(localStorage.getItem(LS_CO) || "[]"); } catch(e) { companies = []; }
+  try { selections = JSON.parse(localStorage.getItem(LS_SEL) || "{}"); } catch(e) { selections = {}; }
+  sheetUrl = localStorage.getItem(LS_SHEET) || "";
+}
+function saveCo() { localStorage.setItem(LS_CO, JSON.stringify(companies)); }
+function saveSel() { localStorage.setItem(LS_SEL, JSON.stringify(selections)); }
+
+// ── SHEET SYNC ───────────────────────────────────────────────────
+async function fetchSelectionsFromSheet() {
+  if (!sheetUrl) return false;
+  try {
+    const r = await fetch(sheetUrl + "?action=get", { method: "GET" });
+    const d = await r.json();
+    if (d.rows && Array.isArray(d.rows)) {
+      selections = {};
+      d.rows.forEach(row => {
+        if (row[1]) selections[row[1]] = { timestamp: row[0], company: row[2], rep: row[3], cat: row[4] };
+      });
+      saveSel();
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+async function pushSelectionToSheet(sponsorName, sel) {
+  if (!sheetUrl) return false;
+  try {
+    const row = [[sel.timestamp, sponsorName, sel.company, sel.rep || "", sel.cat || ""]];
+    const r = await fetch(sheetUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rows: row })
+    });
+    return r.ok;
+  } catch(e) { return false; }
+}
+
+// ── UI HELPERS ───────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showLoading(msg) {
+  document.getElementById('loading-msg').textContent = msg || "Loading…";
+  document.getElementById('loading-overlay').classList.add('show');
+}
+function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
+
+function logout() {
+  currentSponsor = "";
+  spSelected = null;
+  document.getElementById('role-sel').value = "";
+  document.getElementById('sponsor-sel').value = "";
+  document.getElementById('admin-pass').value = "";
+  document.getElementById('f-sponsor').style.display = "none";
+  document.getElementById('f-admin').style.display = "none";
+  document.getElementById('login-err').style.display = "none";
+  document.getElementById('topbar-right').innerHTML = "";
+  show('pg-landing');
+}
+
+function setTopbar(role, name) {
+  const el = document.getElementById('topbar-right');
+  el.innerHTML = `
+    <span class="badge ${role === 'admin' ? 'badge-teal' : 'badge-gold'}">${role === 'admin' ? 'Executive Director' : name}</span>
+    <button class="btn btn-outline btn-sm" onclick="logout()">Sign out</button>`;
+}
+
+// ── LANDING ──────────────────────────────────────────────────────
+function onRoleChange() {
+  const r = document.getElementById('role-sel').value;
+  document.getElementById('f-sponsor').style.display = r === 'sponsor' ? 'block' : 'none';
+  document.getElementById('f-admin').style.display = r === 'admin' ? 'block' : 'none';
+  document.getElementById('login-err').style.display = 'none';
+}
+
+async function doLogin() {
+  const role = document.getElementById('role-sel').value;
+  const errEl = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  if (!role) { errEl.textContent = 'Please select your role.'; errEl.style.display = 'block'; return; }
+
+  if (role === 'admin') {
+    if (document.getElementById('admin-pass').value !== ADMIN_PASS) {
+      errEl.textContent = 'Incorrect passcode.'; errEl.style.display = 'block'; return;
+    }
+    showLoading("Loading admin dashboard…");
+    loadLocal();
+    await fetchSelectionsFromSheet();
+    hideLoading();
+    setTopbar('admin');
+    renderAdmin();
+    show('pg-admin');
+
+  } else {
+    const name = document.getElementById('sponsor-sel').value;
+    if (!name) { errEl.textContent = 'Please select your name.'; errEl.style.display = 'block'; return; }
+    showLoading("Loading your dashboard…");
+    loadLocal();
+    await fetchSelectionsFromSheet();
+    hideLoading();
+    currentSponsor = name;
+
+    if (selections[name]) {
+      const sel = selections[name];
+      document.getElementById('done-msg').textContent = `Welcome back, ${name}. Your pitch slot is already confirmed.`;
+      document.getElementById('done-detail').innerHTML = `<div class="modal-co-cat">${sel.cat || ''}</div><div class="modal-co-name">${sel.company}</div><div class="modal-co-rep">${sel.rep || ''}</div>`;
+      document.getElementById('done-sheet-note').textContent = 'Your selection is locked in. See you at Members Day!';
+      show('pg-done');
+      return;
+    }
+    if (companies.length === 0) {
+      errEl.textContent = 'The company list has not been uploaded by the admin yet. Please check back shortly.';
+      errEl.style.display = 'block'; return;
+    }
+    spSelected = null;
+    setTopbar('sponsor', name);
+    document.getElementById('sp-greeting').textContent = `Welcome, ${name}`;
+    populateCatFilter();
+    renderGrid();
+    show('pg-sponsor');
+  }
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────
+function renderAdmin() {
+  const taken = Object.keys(selections).length;
+  const total = companies.length;
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total companies</div><div class="stat-val">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Slots taken</div><div class="stat-val red">${taken}</div></div>
+    <div class="stat-card"><div class="stat-label">Slots available</div><div class="stat-val green">${total - taken}</div></div>
+    <div class="stat-card"><div class="stat-label">Sponsors confirmed</div><div class="stat-val">${taken}</div></div>`;
+
+  if (sheetUrl) {
+    document.getElementById('sheet-ok').style.display = 'flex';
+    document.getElementById('sheet-form').style.display = 'none';
+  } else {
+    document.getElementById('sheet-ok').style.display = 'none';
+    document.getElementById('sheet-form').style.display = 'block';
+  }
+  renderAdminTable();
+}
+
+async function refreshAdmin() {
+  showLoading("Refreshing…");
+  await fetchSelectionsFromSheet();
+  hideLoading();
+  renderAdmin();
+}
+
+function renderAdminTable() {
+  const takenBy = {};
+  Object.entries(selections).forEach(([sp, s]) => takenBy[s.company] = sp);
+  document.getElementById('co-count').textContent = companies.length ? `— ${companies.length} companies` : '';
+  const wrap = document.getElementById('admin-tbl-wrap');
+
+  if (!companies.length) {
+    wrap.innerHTML = `<div class="upload-zone" onclick="document.getElementById('csv-in').click()">
+      <div class="upload-icon">📋</div>
+      <div class="upload-title">Upload your company list</div>
+      <div class="upload-hint">CSV · Columns: Company Name, Representative, Category</div></div>`;
+    return;
+  }
+  wrap.innerHTML = `<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th style="width:36px">#</th>
+      <th>Company</th><th>Representative</th><th>Category</th>
+      <th style="width:90px">Status</th><th>Claimed by</th>
+      <th style="width:44px"></th>
+    </tr></thead>
+    <tbody>
+      ${companies.map((c, i) => {
+        const t = !!takenBy[c.name];
+        return `<tr>
+          <td style="color:#9CA3AF">${i + 1}</td>
+          <td style="font-weight:500">${c.name}</td>
+          <td>${c.rep || '—'}</td>
+          <td style="color:#6B7280">${c.cat || '—'}</td>
+          <td><span class="pill ${t ? 'pill-red' : 'pill-green'}">${t ? 'Taken' : 'Available'}</span></td>
+          <td style="color:#6B7280;font-size:12px">${takenBy[c.name] || '—'}</td>
+          <td><button class="btn btn-outline-red btn-sm" style="padding:0 8px;height:28px" onclick="delCo(${i})">✕</button></td>
+        </tr>`;
+      }).join('')}
+    </tbody></table></div>`;
+}
+
+function handleCSV(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.trim().split('\n').filter(l => l.trim());
+    const hasHeader = isNaN(lines[0].split(',')[0]);
+    const start = hasHeader ? 1 : 0;
+    companies = lines.slice(start).map(line => {
+      const cols = line.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+      return { name: cols[0] || '', rep: cols[1] || '', cat: cols[2] || '' };
+    }).filter(c => c.name);
+    saveCo(); renderAdmin();
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function showAddRow() { document.getElementById('add-row-form').style.display = 'flex'; document.getElementById('nr-name').focus(); }
+function hideAddRow() { document.getElementById('add-row-form').style.display = 'none'; }
+function addCompany() {
+  const name = document.getElementById('nr-name').value.trim(); if (!name) return;
+  companies.push({ name, rep: document.getElementById('nr-rep').value.trim(), cat: document.getElementById('nr-cat').value.trim() });
+  saveCo(); renderAdmin();
+  ['nr-name','nr-rep','nr-cat'].forEach(id => document.getElementById(id).value = '');
+  hideAddRow();
+}
+function delCo(i) {
+  if (confirm(`Remove "${companies[i].name}"?`)) { companies.splice(i, 1); saveCo(); renderAdmin(); }
+}
+function resetSelections() {
+  if (confirm('Clear ALL confirmed selections? This cannot be undone.')) {
+    selections = {}; saveSel(); renderAdmin();
+  }
+}
+function saveSheetUrl() {
+  sheetUrl = document.getElementById('sheet-url').value.trim();
+  localStorage.setItem(LS_SHEET, sheetUrl);
+  renderAdmin();
+}
+
+// ── SPONSOR ───────────────────────────────────────────────────────
+function populateCatFilter() {
+  const sel = document.getElementById('sp-cat');
+  const cats = [...new Set(companies.map(c => c.cat).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option>${c}</option>`).join('');
+}
+
+async function renderGrid() {
+  const q = document.getElementById('sp-q').value.toLowerCase();
+  const cat = document.getElementById('sp-cat').value;
+  const takenSet = new Set(Object.values(selections).map(s => s.company));
+  const filtered = companies.filter(c =>
+    (!q || (c.name + ' ' + c.rep).toLowerCase().includes(q)) &&
+    (!cat || c.cat === cat)
+  );
+  document.getElementById('sp-grid').innerHTML = filtered.length
+    ? filtered.map(c => {
+        const taken = takenSet.has(c.name);
+        const sel = spSelected && spSelected.name === c.name;
+        return `<div class="co-card${taken ? ' taken' : ''}${sel ? ' sel' : ''}" onclick="${taken ? '' : `selectCo('${c.name.replace(/'/g, "\\'")}')`}">
+          ${sel ? `<div class="co-chk"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}
+          ${taken ? '<div class="taken-lbl">Taken</div>' : ''}
+          <div class="co-cat">${c.cat || 'General'}</div>
+          <div class="co-name">${c.name}</div>
+          <div class="co-rep">${c.rep || ''}</div>
+        </div>`;
+      }).join('')
+    : '<div class="empty-state">No companies match your search.</div>';
+
+  document.getElementById('sp-count').textContent = `Showing ${filtered.length} of ${companies.length} companies`;
+
+  const bar = document.getElementById('sp-sel-bar');
+  if (spSelected) {
+    bar.style.display = 'flex';
+    document.getElementById('sp-sel-txt').textContent = 'Selected: ' + spSelected.name;
+    document.getElementById('sp-confirm-btn').disabled = false;
+  } else {
+    bar.style.display = 'none';
+    document.getElementById('sp-confirm-btn').disabled = true;
+  }
+}
+
+async function selectCo(name) {
+  // Re-check if still available
+  showLoading("Checking availability…");
+  await fetchSelectionsFromSheet();
+  hideLoading();
+  const taken = new Set(Object.values(selections).map(s => s.company));
+  if (taken.has(name)) {
+    alert('This slot was just taken by another sponsor. The list has been refreshed.');
+    renderGrid(); return;
+  }
+  spSelected = companies.find(c => c.name === name) || null;
+  renderGrid();
+}
+
+function spClear() { spSelected = null; renderGrid(); }
+
+function openModal() {
+  if (!spSelected) return;
+  document.getElementById('modal-cat').textContent = spSelected.cat || '';
+  document.getElementById('modal-name').textContent = spSelected.name;
+  document.getElementById('modal-rep').textContent = spSelected.rep || '';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+async function finalConfirm() {
+  closeModal();
+  showLoading("Securing your pitch slot…");
+  // Final race-condition check
+  await fetchSelectionsFromSheet();
+  const taken = new Set(Object.values(selections).map(s => s.company));
+  if (taken.has(spSelected.name)) {
+    hideLoading();
+    alert('Sorry — this slot was just taken by another sponsor. Please choose another company.');
+    spSelected = null; renderGrid(); return;
+  }
+  const sel = { company: spSelected.name, rep: spSelected.rep || '', cat: spSelected.cat || '', timestamp: new Date().toISOString() };
+  selections[currentSponsor] = sel;
+  saveSel();
+  const pushed = await pushSelectionToSheet(currentSponsor, sel);
+  hideLoading();
+
+  document.getElementById('done-msg').textContent = `${currentSponsor}, your pitch slot is confirmed. See you at Members Day!`;
+  document.getElementById('done-detail').innerHTML = `<div class="modal-co-cat">${sel.cat}</div><div class="modal-co-name">${sel.company}</div><div class="modal-co-rep">${sel.rep}</div>`;
+  document.getElementById('done-sheet-note').textContent = pushed ? '✓ Your selection has been recorded in the event Google Sheet.' : 'Selection saved locally. Admin will confirm your slot.';
+  show('pg-done');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+loadLocal();
+if (sheetUrl) document.getElementById('sheet-url').value = sheetUrl;
+</script>
+</body>
+</html>
