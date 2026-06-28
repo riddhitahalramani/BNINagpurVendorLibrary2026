@@ -418,13 +418,14 @@ async function fetchSheet(){
   if(!sheetUrl)return false;
   try{
     const r=await fetch(sheetUrl+"?action=selections&t="+Date.now());
+    if(!r.ok)return false;
     const d=await r.json();
     if(d.rows&&Array.isArray(d.rows)){
       selections={};
-      d.rows.forEach(row=>{if(row[1])selections[row[1]]={timestamp:row[0],company:row[2],rep:row[3],cat:row[4]};});
+      d.rows.forEach(row=>{if(row[1]&&row[1].toString().trim())selections[row[1].toString().trim()]={timestamp:row[0],company:row[2]||"",rep:row[3]||"",cat:row[4]||""};});
       saveSel();return true;
     }
-  }catch(e){}
+  }catch(e){console.error("fetchSheet error:",e);}
   return false;
 }
 
@@ -476,6 +477,8 @@ async function doLogin(){
     if(document.getElementById("admin-pass").value!==ADMIN_PASS){errEl.textContent="Incorrect passcode.";errEl.style.display="block";return;}
     showLoading("Loading admin dashboard...");loadLocal();await Promise.all([fetchCompanies(),fetchSheet()]);hideLoading();
     setTopbar("admin");renderAdmin();show("pg-admin");
+    // Auto-refresh selections every 30 seconds in admin panel
+    setInterval(async()=>{await fetchSheet();renderAdmin();},30000);
   }else{
     const name=document.getElementById("sponsor-sel").value;
     const code=document.getElementById("access-code-input").value.trim();
@@ -485,7 +488,11 @@ async function doLogin(){
       errEl.textContent="Incorrect access code for "+name+". Please check the code sent to you via WhatsApp.";
       errEl.style.display="block";return;
     }
-    showLoading("Loading the Vendor Library...");loadLocal();await Promise.all([fetchCompanies(),fetchSheet()]);hideLoading();
+    showLoading("Loading the Vendor Library...");
+    loadLocal();
+    const [coOk, selOk] = await Promise.all([fetchCompanies(), fetchSheet()]);
+    hideLoading();
+    if(!selOk && !sheetUrl){errEl.textContent="Cannot connect to the event server. Please check your internet and try again.";errEl.style.display="block";return;}
     currentSponsor=name;
     if(selections[name]){
       const sel=selections[name];
@@ -635,12 +642,18 @@ async function finalConfirm(){
     hideLoading();alert("Sorry - this slot was just taken. Please choose another.");spSelected=null;renderGrid();return;
   }
   const sel={company:spSelected.name,rep:spSelected.rep||"",cat:spSelected.cat||"",timestamp:new Date().toISOString()};
-  selections[currentSponsor]=sel;saveSel();
   const pushed=await pushSheet(currentSponsor,sel);
+  if(!pushed){
+    hideLoading();
+    alert("Could not save your selection. Please check your internet connection and try again.");
+    return;
+  }
+  // Re-fetch from sheet to confirm and sync
+  await fetchSheet();
   hideLoading();
   document.getElementById("done-msg").textContent=currentSponsor+", your pitch slot is confirmed. See you at NCube 2026!";
   document.getElementById("done-detail").innerHTML='<div class="modal-co-cat">'+(sel.cat||"")+'</div><div class="modal-co-name">'+sel.company+'</div><div class="modal-co-rep">'+(sel.rep||"")+"</div>";
-  document.getElementById("done-sheet-note").textContent=pushed?"Your selection has been recorded in the event Google Sheet.":"Selection saved. Admin will confirm your slot.";
+  document.getElementById("done-sheet-note").textContent="Your selection has been recorded in the event Google Sheet.";
   show("pg-done");
 }
 
