@@ -467,10 +467,9 @@ async function pushSheet(name, sel) {
           resolve(true);
         } else if (attempts >= 8) {
           clearInterval(poll);
-          // Form submission went through but sheet is slow — save locally
-          selections[name] = sel; saveSel();
+          // Polling timed out — form submission may have failed (e.g. sign-in required)
           try { document.body.removeChild(iframe); document.body.removeChild(form); } catch(e) {}
-          resolve(true);
+          resolve(false);
         }
       }, 1500);
     } catch(e) {
@@ -678,21 +677,21 @@ function openModal(){
 function closeModal(){document.getElementById("modal").classList.remove("open");}
 
 async function finalConfirm(){
-  closeModal();showLoading("Confirming your slot — please wait up to 15 seconds...");
+  closeModal();showLoading("Confirming your slot — please wait...");
+  // Fresh fetch to catch any last-second changes
   await fetchSheet();
   if(new Set(Object.values(selections).map(s=>s.company)).has(spSelected.name)){
-    hideLoading();alert("Sorry - this slot was just taken. Please choose another.");spSelected=null;renderGrid();return;
+    hideLoading();alert("Sorry — this slot was just taken by another sponsor. Please choose another company.");spSelected=null;renderGrid();return;
   }
   const sel={company:spSelected.name,rep:spSelected.rep||"",cat:spSelected.cat||"",timestamp:new Date().toISOString()};
-  const pushed=await pushSheet(currentSponsor,sel);
-  if(!pushed){
-    hideLoading();
-    alert("Could not save your selection. Please check your internet connection and try again.");
+  // Submit via Google Form
+  const confirmed=await pushSheet(currentSponsor,sel);
+  hideLoading();
+  if(!confirmed){
+    alert("Your selection could not be saved. Please ensure your Google Form does not require sign-in, then try again.");
     return;
   }
-  // Re-fetch from sheet to confirm and sync
-  await fetchSheet();
-  hideLoading();
+  // Only reach here if pushSheet confirmed the row exists in the Sheet
   document.getElementById("done-msg").textContent=currentSponsor+", your pitch slot is confirmed. See you at NCube 2026!";
   document.getElementById("done-detail").innerHTML='<div class="modal-co-cat">'+(sel.cat||"")+'</div><div class="modal-co-name">'+sel.company+'</div><div class="modal-co-rep">'+(sel.rep||"")+"</div>";
   document.getElementById("done-sheet-note").textContent="Your selection has been recorded in the event Google Sheet.";
