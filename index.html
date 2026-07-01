@@ -176,6 +176,7 @@
           <option value="">Select your role...</option>
           <option value="admin">Admin &mdash; BNI Executive Director</option>
           <option value="sponsor">Corporate Sponsor</option>
+          <option value="member">BNI Member / NCube Director</option>
         </select>
       </div>
       <div id="f-sponsor" style="display:none">
@@ -212,7 +213,37 @@
           <div class="code-hint">Your unique code was sent to you by the NCube admin via WhatsApp.</div>
         </div>
       </div>
-      <div id="f-admin" style="display:none" class="field">
+      <div id="f-member" style="display:none">
+        <div class="field">
+          <label>Your name</label>
+          <select id="member-sel">
+            <option value="">Choose your name...</option>
+            <optgroup label="Main Sponsors">
+              <option>Sonu Sontakke</option><option>Swastik Jain</option>
+              <option>Amit Yenurkar</option><option>Amit Chopkar</option>
+              <option>Nikhalesh Nilawar</option><option>Mohd Riyaz</option>
+              <option>Tahreem Ali</option><option>Jungle Homes</option>
+              <option>Sameer Bhagat</option><option>Aishwary Bhombe</option>
+              <option>Amol Talekar</option><option>Abhishek Raut</option>
+              <option>Riddhi Tahalramani</option>
+            </optgroup>
+            <optgroup label="NCube Directors">
+              <option>Ankita Chawla</option><option>Kavita Bakre</option>
+              <option>Kavya Raisingh</option><option>Aliakbbar Maimun</option>
+              <option>Rahul Agarwal</option><option>Sshetal Bansode</option>
+              <option>Vaibhav Mohta</option><option>Angelina Dias</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field">
+          <label>Your personal access code</label>
+          <input id="member-code-input" type="text" placeholder="e.g. SONU61" autocomplete="off"
+            style="text-transform:uppercase;letter-spacing:.1em;font-family:'Courier New',monospace;font-size:15px;font-weight:700"
+            oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')doLogin()">
+          <div class="code-hint">Your unique code was sent to you by the NCube admin via WhatsApp.</div>
+        </div>
+      </div>
+            <div id="f-admin" style="display:none" class="field">
         <label>Admin passcode</label>
         <input id="admin-pass" type="password" placeholder="Enter passcode" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
@@ -381,7 +412,30 @@ const ACCESS_CODES={
   "Suchita Aurora":"SUCHI64",
   "Vaidehi Agrawal":"VAIDE53",
   "Vikram Jain":"VIKRA45",
-  "Zeba Mirza":"ZEBA29"
+  "Zeba Mirza":"ZEBA29",
+  // BNI Main Sponsors
+  "Sonu Sontakke":"SONU61",
+  "Swastik Jain":"SWAST58",
+  "Amit Yenurkar":"AMIT35",
+  "Amit Chopkar":"AMIT86",
+  "Nikhalesh Nilawar":"NIKHA32",
+  "Mohd Riyaz":"MOHD39",
+  "Tahreem Ali":"TAHRE41",
+  "Jungle Homes":"JUNGL27",
+  "Sameer Bhagat":"SAMEE21",
+  "Aishwary Bhombe":"AISHW42",
+  "Amol Talekar":"AMOL59",
+  "Abhishek Raut":"ABHIS77",
+  "Riddhi Tahalramani":"RIDDH97",
+  // NCube Directors
+  "Ankita Chawla":"ANKIT99",
+  "Kavita Bakre":"KAVIT78",
+  "Kavya Raisingh":"KAVYA21",
+  "Aliakbbar Maimun":"ALIAK89",
+  "Rahul Agarwal":"RAHUL72",
+  "Sshetal Bansode":"SSHET35",
+  "Vaibhav Mohta":"VAIBH63",
+  "Angelina Dias":"ANGEL88"
 };
 
 const SPONSORS=Object.keys(ACCESS_CODES);
@@ -487,9 +541,12 @@ function logout(){
   currentSponsor="";spSelected=null;
   document.getElementById("role-sel").value="";
   document.getElementById("sponsor-sel").value="";
+  document.getElementById("member-sel").value="";
   document.getElementById("admin-pass").value="";
   document.getElementById("access-code-input").value="";
+  document.getElementById("member-code-input").value="";
   document.getElementById("f-sponsor").style.display="none";
+  document.getElementById("f-member").style.display="none";
   document.getElementById("f-admin").style.display="none";
   document.getElementById("login-err").style.display="none";
   document.getElementById("topbar-right").innerHTML="";
@@ -505,6 +562,7 @@ function setTopbar(role,name){
 function onRoleChange(){
   const r=document.getElementById("role-sel").value;
   document.getElementById("f-sponsor").style.display=r==="sponsor"?"block":"none";
+  document.getElementById("f-member").style.display=r==="member"?"block":"none";
   document.getElementById("f-admin").style.display=r==="admin"?"block":"none";
   document.getElementById("login-err").style.display="none";
 }
@@ -521,8 +579,9 @@ async function doLogin(){
     // Auto-refresh selections every 30 seconds in admin panel
     setInterval(async()=>{await fetchSheet();renderAdmin();},30000);
   }else{
-    const name=document.getElementById("sponsor-sel").value;
-    const code=document.getElementById("access-code-input").value.trim();
+    const isMember=role==="member";
+    const name=isMember?document.getElementById("member-sel").value:document.getElementById("sponsor-sel").value;
+    const code=isMember?document.getElementById("member-code-input").value.trim():document.getElementById("access-code-input").value.trim();
     if(!name){errEl.textContent="Please select your name.";errEl.style.display="block";return;}
     if(!code){errEl.textContent="Please enter your personal access code.";errEl.style.display="block";return;}
     if(!verifyCode(name,code)){
